@@ -1,6 +1,5 @@
 var ASQ = require('asynquence')
 var http = require('http')
-var url = require('url')
 
 module.exports = function(fontUrls, cb) {
 	if (typeof fontUrls === 'string') {
@@ -9,9 +8,9 @@ module.exports = function(fontUrls, cb) {
 
 	var sequence = ASQ()
 
-	var fns = fontUrls.map(function(font) {
+	var fns = fontUrls.map(function(url) {
 		return function(done) {
-			http.get(url.parse(font), function(res) {
+			http.get(url, function(res) {
 				res.on('end', done)
 			})
 		}
