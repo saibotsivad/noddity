@@ -26,21 +26,17 @@ module.exports = function(bodyClass, fontUrls) {
 
 	var fns = fontUrls.map(function(font) {
 		return function(done) {
-			var pathname = window && window.location && window.location.pathname ? window.location.pathname : '/'
-			console.log(pathname)
-			http.get(pathname + font, function(res) {
+			http.get(window.location.pathname + font, function(res) {
 				res.on('end', done)
 			})
 		}
 	})
 
 	sequence.gate.apply(sequence, fns).then(function() {
-		if (window && window.document && window.document.body) {
-			if (window.document.body.className.length > 0) {
-				window.document.body.className += bodyClass
-			} else {
-				window.document.body.className = bodyClass
-			}
+		if (window.document.body.className.length > 0) {
+			window.document.body.className += bodyClass
+		} else {
+			window.document.body.className = bodyClass
 		}
 	})
 
