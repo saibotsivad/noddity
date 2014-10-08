@@ -27,6 +27,7 @@ module.exports = function(bodyClass, fontUrls) {
 	var fns = fontUrls.map(function(font) {
 		return function(done) {
 			var pathname = window && window.location && window.location.pathname ? window.location.pathname : '/'
+			console.log(pathname)
 			http.get(pathname + font, function(res) {
 				res.on('end', done)
 			})
