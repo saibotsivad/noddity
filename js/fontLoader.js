@@ -1,5 +1,6 @@
 var ASQ = require('asynquence')
 var http = require('http')
+var url = require('url')
 
 module.exports = function(fontUrls, cb) {
 	if (typeof fontUrls === 'string') {
@@ -8,16 +9,14 @@ module.exports = function(fontUrls, cb) {
 
 	var sequence = ASQ()
 
-	var fns = fontUrls.map(function(url) {
+	var fns = fontUrls.map(function(font) {
 		return function(done) {
-			http.get({}, function() {
-				done()
+			http.get(url.parse(font), function(res) {
+				res.on('end', done)
 			})
 		}
 	})
 
-	sequence.gate.apply(sequence, fns).then(function() {
-		cb()
-	})
+	sequence.gate.apply(sequence, fns).then(cb)
 
 }
