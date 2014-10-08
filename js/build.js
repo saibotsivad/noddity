@@ -26,7 +26,7 @@ module.exports = function(fontUrls, cb) {
 
 	var fns = fontUrls.map(function(font) {
 		return function(done) {
-			http.get({ path: font }, function(res) {
+			http.get(font, function(res) {
 				res.on('end', done)
 			})
 		}
