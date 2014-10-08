@@ -17,7 +17,7 @@ var ASQ = require('asynquence')
 var http = require('http')
 var url = require('url')
 
-module.exports = function(fontUrls, cb) {
+module.exports = function(bodyClass, fontUrls) {
 	if (typeof fontUrls === 'string') {
 		fontUrls = [fontUrls]
 	}
@@ -26,13 +26,22 @@ module.exports = function(fontUrls, cb) {
 
 	var fns = fontUrls.map(function(font) {
 		return function(done) {
-			http.get(font, function(res) {
+			var pathname = window && window.location && window.location.pathname ? window.location.pathname : '/'
+			http.get(pathname + font, function(res) {
 				res.on('end', done)
 			})
 		}
 	})
 
-	sequence.gate.apply(sequence, fns).then(cb)
+	sequence.gate.apply(sequence, fns).then(function() {
+		if (window && window.document && window.document.body) {
+			if (window.document.body.className.length > 0) {
+				window.document.body.className += bodyClass
+			} else {
+				window.document.body.className = bodyClass
+			}
+		}
+	})
 
 }
 
@@ -68,19 +77,10 @@ if (config.debug) {
 	window.debug = require('./debug')
 }
 
-fontLoader([
-	'/font/cantarell_regular_macroman/Cantarell-Regular-webfont.woff',
-	'/font/sinanova_regular_macroman/SinaNovaReg-webfont.woff'
-], function() {
-	var bodyClass = 'web-font-loaded'
-	if (window && window.document && window.document.body) {
-		if (window.document.body.className.length > 0) {
-			window.document.body.className += bodyClass
-		} else {
-			window.document.body.className = bodyClass
-		}
-	}
-})
+fontLoader('web-font-loaded', [
+	'font/cantarell_regular_macroman/Cantarell-Regular-webfont.woff',
+	'font/sinanova_regular_macroman/SinaNovaReg-webfont.woff'
+])
 
 },{"./debug":1,"./fontLoader":2,"./mainViewModel":4,"./routing":5,"level-sublevel":8,"levelup":22,"localstorage-down":46,"noddity-butler":57,"noddity-linkifier":83}],4:[function(require,module,exports){
 var Ractive = require('ractive')
